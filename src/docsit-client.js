@@ -20,7 +20,7 @@ class DocsitClient {
       return;
     }
     const { privateKey } = this.web3.eth.accounts.create();
-    if (localStorage) localStorage.setItem(privateKey);
+    if (localStorage) localStorage.setItem('docsitEthereumPrivateKey', privateKey);
   }
 
   getDocument(id, options) {
