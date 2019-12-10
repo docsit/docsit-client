@@ -345,7 +345,7 @@ export const CONTRACT_ABI = [
     type: 'function',
   },
 ];
-export const CONTRACT_ADDRESS = '0x4Ae05becBdA4E342815eAb83757E78DcE4f8B52C';
+export const CONTRACT_ADDRESS = '0xeae07fbe79a5c52d8da62c4e1851f4665db8271c';
 // export const IPFS_HOST = '165.22.36.48';
 // export const IPFS_PORT = 5001;
 // export const IPFS_PROTOCOL = 'http';
