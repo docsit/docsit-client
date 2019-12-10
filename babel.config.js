@@ -11,7 +11,7 @@ module.exports = api => {
         },
       },
     ],
-    // 'minify',
+    'minify',
   ];
 
   const plugins = [];
