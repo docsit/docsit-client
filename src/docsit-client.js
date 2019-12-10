@@ -36,4 +36,4 @@ class DocsitClient {
   // }
 }
 
-export default Docsit;
+export default DocsitClient;
