@@ -25,7 +25,6 @@ describe('Describe document module', () => {
     expect(documentData).to.eql({
       id: 'a8719f44df881b7c',
       organizationId: '1fd5f224b87d03f4',
-      encrypted: false,
       magic: '00000000000000000000000000000000',
       body: '# Title',
       data: { hola: 'jota' },
@@ -61,11 +60,34 @@ describe('Describe document module', () => {
           'a3fc220059d90999',
           'a8719f44df881b7c',
           '34206c975e2e09e7',
+          'c0d736e9dcca10ee',
+          '707d221731bdf977',
+          '1ecd7cabbce08050',
+          '1f0bf9f73d4267cf',
+          '180df03800d8bb0c',
+          'c9160ead4dc366a9',
+          '150e214c9b682ce6',
+          'b4d667afdd227fe5',
+          '102229f2198659b3',
+          '36b35eca24d74d01',
+          'ebde1248df2e4a0a',
+          'c7a044e63732ae72',
+          '33f04d11edd6a98f',
+          'fdba6be4dfd22a79',
+          'f63f4631526973e1',
+          '15523e2175668aa3',
+          'c2a040b6bcf5705e',
+          '45653c51de33a2ef',
+          '02c664fd182ab388',
+          '0e6a3b7ad38c3dfe',
+          'e2bb559443cd7a47',
+          '77c7da1516b12f36',
+          '4d3d570a373bf5b5',
+          '31003f53970db2b4',
         ],
         id: '1fd5f224b87d03f4',
         name: 'Docsit Client Test Organization',
       },
-      encrypted: false,
       magic: '00000000000000000000000000000000',
       body: '# Title',
       data: { hola: 'jota' },
@@ -87,7 +109,6 @@ describe('Describe document module', () => {
     expect(documentData).to.eql({
       id: 'a8719f44df881b7c',
       organizationId: '1fd5f224b87d03f4',
-      encrypted: false,
       magic: '00000000000000000000000000000000',
       body: '# Title',
       data: { hola: 'jota' },
@@ -152,7 +173,6 @@ describe('Describe document module', () => {
     expect(documentData).to.eql({
       id: 'd47b0bc94ddde188',
       organizationId: '584b071315f47728',
-      encrypted: true, // TODO: THIS SHOULD BE FALSE
       magic: '00000000000000000000000000000000',
       body: '# Title',
       data: {},
@@ -166,7 +186,7 @@ describe('Describe document module', () => {
 
   it.skip('gets encrypted document with organization details', async () => {});
 
-  it.skip('gets encrypted document with attachmen information', async () => {});
+  it.skip('gets encrypted document with attachment information', async () => {});
 
   it.skip('gets encrypted document with attachmented files', async () => {});
 });

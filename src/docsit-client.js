@@ -2,9 +2,9 @@
 import createWeb3Instance from './web3';
 import createContractInstance from './contract';
 import createIpfsClient from './ipfs';
-import { getDocument, getAttachment, issueDocument } from './documents';
+import { getDocument /* , getAttachment, issueDocument */ } from './documents';
 
-class Docsit {
+class DocsitClient {
   constructor() {
     /** @private */
     this.web3 = createWeb3Instance();
@@ -27,13 +27,13 @@ class Docsit {
     return getDocument(this.contract, this.ipfsClient, id, options);
   }
 
-  getAttachment(cid) {
-    return getAttachment(this.ipfsClient, cid);
-  }
+  // getAttachment(cid) {
+  //   return getAttachment(this.ipfsClient, cid);
+  // }
 
-  issueDocument(body, data, attachments) {
-    return issueDocument(this.contract, this.ipfsClient, body, data, attachments);
-  }
+  // issueDocument(body, data, attachments) {
+  //   return issueDocument(this.contract, this.ipfsClient, body, data, attachments);
+  // }
 }
 
 export default Docsit;

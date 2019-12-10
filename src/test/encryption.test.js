@@ -4,6 +4,7 @@ import {
   hexStringToBuffer,
   bufferToHexString,
   utf8StringToArray,
+  arrayToUtf8String,
   encryptMultiple,
   decryptMultiple,
 } from '../encryption';
@@ -61,6 +62,16 @@ describe('Describe encryption module', () => {
     }
   });
 
+  it('correctly converts an array to a utf8 string', async () => {
+    const STRING = 'hola:jota';
+    const array = new Uint8Array(STRING.length);
+    for (let i = 0; i < STRING.length; i += 1) {
+      array[i] = STRING.charCodeAt(i);
+    }
+    const string = arrayToUtf8String(array);
+    expect(string).to.equal(STRING);
+  });
+
   it('correctly decrypts multiple string with the correct password', async () => {
     const PASSWORD = 'jota, pasame la sal';
     const HEX_MAGIC = '1fae168d77f474896bae8537257dddfb';
@@ -116,8 +127,7 @@ describe('Describe encryption module', () => {
     try {
       await decryptMultiple(encryptedArray, hexMagic, 'jota, pasame el salero');
     } catch (err) {
-      console.log(err);
-      expect(true).to.be.true;
+      expect(err.code).to.equal('WRONG_PASSWORD');
     }
   });
 });

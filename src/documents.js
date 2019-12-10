@@ -1,5 +1,8 @@
+import CustomError from './custom-error';
 import { hexToArrayBuffer, decryptMultiple, encryptMultiple } from './encryption';
 import { listFilesInDirectory, getFile, saveFilesInDirectory } from './files';
+
+const stripHex = hex => hex.replace(/^(0x)/, '');
 
 const parseOrganizationRawObject = rawObject => {
   const { id, name, documentIds, created } = rawObject;
@@ -12,22 +15,11 @@ const parseOrganizationRawObject = rawObject => {
 };
 
 const parseDocumentRawObject = rawObject => {
-  const {
-    id,
-    organizationId,
-    encrypted,
-    magic,
-    body,
-    data,
-    ipfsDirectoryHash,
-    pinned,
-    created,
-  } = rawObject;
+  const { id, organizationId, magic, body, data, ipfsDirectoryHash, pinned, created } = rawObject;
   return {
-    id: id.replace(/^(0x)/, ''),
-    organizationId: organizationId.replace(/^(0x)/, ''),
-    encrypted,
-    magic: magic.replace(/^(0x)/, ''),
+    id: stripHex(id),
+    organizationId: stripHex(organizationId),
+    magic: stripHex(magic),
     body,
     data: JSON.parse(data),
     ipfsDirectoryHash,
@@ -42,7 +34,7 @@ const getOrganizationById = async (contract, organizationId) => {
     return parseOrganizationRawObject(response);
   } catch (err) {
     console.error(err);
-    throw new Error('Organization not found.');
+    throw new CustomError('Organization not found', 'NONEXISTENT_ORGANIZATION');
   }
 };
 
@@ -52,7 +44,7 @@ const getDocumentById = async (contract, documentId) => {
     return parseDocumentRawObject(response);
   } catch (err) {
     console.error(err);
-    throw new Error('Document not found.');
+    throw new CustomError('Document not found', 'NONEXISTENT_DOCUMENT');
   }
 };
 
@@ -61,9 +53,40 @@ export const getDocument = async (contract, ipfsClient, id, options = {}) => {
     organizationDetails: false,
     attachmentInformation: false,
     attachedFiles: false,
+    // requestPassword: () => {},
+    wrongPasswordAlert: () => {},
     ...options,
   };
-  const documentData = await getDocumentById(contract, id);
+
+  let rawDocumentData;
+  try {
+    rawDocumentData = await contract.methods.getDocumentById(`0x${id}`).call();
+  } catch (err) {
+    throw new CustomError('Document does not exist', 'NONEXISTENT_DOCUMENT');
+  }
+
+  if (rawDocumentData.magic !== '0x00000000000000000000000000000000') {
+    if (typeof finalOptions.requestPassword !== 'function')
+      throw new CustomError('Document is encrypted and requirePassword function was not provided');
+    while (true) {
+      const password = finalOptions.requestPassword();
+      try {
+        const [body, data, ipfsDirectoryHash] = decryptMultiple(
+          [rawDocumentData.body, rawDocumentData.data, rawDocumentData.ipfsDirectoryHash],
+          stripHex(rawDocumentData.magic),
+          password
+        );
+        rawDocumentData.body = body;
+        rawDocumentData.data = data;
+        rawDocumentData.ipfsDirectoryHash = ipfsDirectoryHash;
+      } catch (e) {
+        finalOptions.wrongPasswordAlert();
+      }
+    }
+  }
+
+  const documentData = parseDocumentRawObject(rawDocumentData);
+
   if (finalOptions.organizationDetails) {
     documentData.organization = await getOrganizationById(contract, documentData.organizationId);
   }
@@ -84,25 +107,6 @@ export const getDocument = async (contract, ipfsClient, id, options = {}) => {
   return documentData;
 };
 
-export const decryptDocumentData = (documentData, password) => {
-  const magic = hexToArrayBuffer(documentData.magic);
-  const [body, data, ipfsDirectoryHash] = decrypt(
-    [documentData.body, documentData.data, documentData.ipfsDirectoryHash],
-    magic,
-    password
-  );
-  try {
-    return {
-      ...documentData,
-      body,
-      data: JSON.parse(data),
-      ipfsDirectoryHash,
-    };
-  } catch (err) {
-    throw new Error('Wrong password.');
-  }
-};
-
 export const encryptDocumentData = (documentData, password) => {
   const {
     magic,
@@ -120,10 +124,10 @@ export const encryptDocumentData = (documentData, password) => {
 export const getAttachment = (ipfsClient, cid) =>
   getFile(ipfsClient, cid).then(file => file.content);
 
-export const issueDocument = async (contract, ipfsClient, body, data, attachments, options) => {
+export const generateDocument = async (contract, ipfsClient, body, data, attachments, options) => {
   const finalOptions = {
     encrypted: false,
-    password: '',
+    // password: '',
     ...options,
   };
   const {

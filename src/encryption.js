@@ -1,4 +1,4 @@
-const webCrypto = require('@trust/webcrypto');
+import webCrypto from '@trust/webcrypto';
 
 const window = {
   crypto: webCrypto,
@@ -8,6 +8,13 @@ export const utf8StringToArray = str => {
   if (typeof str !== 'string') throw new TypeError('Expected input to be a string');
   const textEncoder = new TextEncoder('utf-8');
   return textEncoder.encode(str);
+};
+
+export const arrayToUtf8String = array => {
+  if (!Array.isArray(array) && !ArrayBuffer.isView(array))
+    throw new TypeError('Expected input to be array');
+  const textEncoder = new TextDecoder('utf-8');
+  return textEncoder.decode(array);
 };
 
 export const hexStringToBuffer = hex => {
@@ -69,12 +76,19 @@ export const decryptMultiple = async (encryptedArray, hexMagic, password) => {
   const cryptoKey = await generateKey(magic, password);
   const decryptedArray = await Promise.all(
     encryptedArray.map(async encryptedText => {
-      const decryptedBuffer = await window.crypto.subtle.decrypt(
-        { name: 'AES-CBC', iv: magic },
-        cryptoKey,
-        utf8StringToArray(encryptedText)
-      );
-      return bufferToHexString(new Uint8Array(decryptedBuffer));
+      try {
+        const decryptedBuffer = await window.crypto.subtle.decrypt(
+          { name: 'AES-CBC', iv: magic },
+          cryptoKey,
+          hexStringToBuffer(encryptedText)
+        );
+        return arrayToUtf8String(new Uint8Array(decryptedBuffer));
+      } catch (err) {
+        const error = new Error('Wrong password.');
+        error.code = 'WRONG_PASSWORD';
+        error.orginalError = err;
+        throw error;
+      }
     })
   );
   return decryptedArray;
