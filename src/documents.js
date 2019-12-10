@@ -55,8 +55,6 @@ export const getDocument = async (contract, ipfsClient, id, options = {}) => {
     throw new CustomError('Document does not exist', 'NONEXISTENT_DOCUMENT');
   }
 
-  rawDocumentData.body = rawDocumentData.body.join();
-
   if (rawDocumentData.magic !== '0x00000000000000000000000000000000') {
     if (typeof finalOptions.requestPassword !== 'function')
       throw new CustomError('Document is encrypted and requirePassword function was not provided');
