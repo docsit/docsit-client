@@ -1,7 +1,12 @@
-if (typeof process !== 'undefined' && process.release.name === 'node') {
-  // eslint-disable-next-line
-  var window = { crypto: require('@trust/webcrypto') };
+try {
+  if (typeof process !== 'undefined' && process.release.name === 'node') {
+    // eslint-disable-next-line
+    var window = { crypto: require('@trust/webcrypto') };
+  }
+} catch (err) {
+  console.log('Package running on web');
 }
+
 
 export const utf8StringToArray = str => {
   if (typeof str !== 'string') throw new TypeError('Expected input to be a string');
