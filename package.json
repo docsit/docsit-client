@@ -1,6 +1,6 @@
 {
   "name": "@docsit/client",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "",
   "main": "lib/docsit-client.js",
   "scripts": {
