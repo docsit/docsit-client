@@ -1,8 +1,7 @@
-import webCrypto from '@trust/webcrypto';
-
-const window = {
-  crypto: webCrypto,
-};
+if (typeof process !== 'undefined' && process.release.name === 'node') {
+  // eslint-disable-next-line
+  var window = { crypto: require('@trust/webcrypto') };
+}
 
 export const utf8StringToArray = str => {
   if (typeof str !== 'string') throw new TypeError('Expected input to be a string');

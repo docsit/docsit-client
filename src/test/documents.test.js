@@ -84,6 +84,7 @@ describe('Describe document module', () => {
           '77c7da1516b12f36',
           '4d3d570a373bf5b5',
           '31003f53970db2b4',
+          'd662f6c63e629459',
         ],
         id: '1fd5f224b87d03f4',
         name: 'Docsit Client Test Organization',
