@@ -5,9 +5,9 @@
   "main": "lib/docsit-client.js",
   "scripts": {
     "build": "rm -rf lib && babel src --out-dir lib --copy-files --source-maps",
-    "test": "npm run build && npx mocha lib/test/*.test.js --timeout 10000",
+    "test": "npx mocha lib/test/*.test.js --timeout 10000",
     "generate-documentation": "npx jsdoc src/files.js -c jsdoc.js --destination documentation",
-    "prepare-publish": "npm run test && npm run generate-documentation"
+    "prepare-publish": "npm run build && npm run test && npm run generate-documentation"
   },
   "author": {
     "name": "Iñaki Arango",
