@@ -34,9 +34,9 @@ export const CONTRACT_ABI = [
             type: 'bytes16',
           },
           {
-            internalType: 'string',
+            internalType: 'string[]',
             name: 'body',
-            type: 'string',
+            type: 'string[]',
           },
           {
             internalType: 'string',
@@ -255,9 +255,9 @@ export const CONTRACT_ABI = [
         type: 'bytes16',
       },
       {
-        internalType: 'string',
+        internalType: 'string[]',
         name: '_body',
-        type: 'string',
+        type: 'string[]',
       },
       {
         internalType: 'string',
@@ -310,9 +310,9 @@ export const CONTRACT_ABI = [
             type: 'bytes16',
           },
           {
-            internalType: 'string',
+            internalType: 'string[]',
             name: 'body',
-            type: 'string',
+            type: 'string[]',
           },
           {
             internalType: 'string',
@@ -345,7 +345,7 @@ export const CONTRACT_ABI = [
     type: 'function',
   },
 ];
-export const CONTRACT_ADDRESS = '0xc12E0A6c51515d735D83158Cb9974BD00F0a9209';
+export const CONTRACT_ADDRESS = '0x4Ae05becBdA4E342815eAb83757E78DcE4f8B52C';
 // export const IPFS_HOST = '165.22.36.48';
 // export const IPFS_PORT = 5001;
 // export const IPFS_PROTOCOL = 'http';

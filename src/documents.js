@@ -38,16 +38,6 @@ const getOrganizationById = async (contract, organizationId) => {
   }
 };
 
-const getDocumentById = async (contract, documentId) => {
-  try {
-    const response = await contract.methods.getDocumentById(`0x${documentId}`).call();
-    return parseDocumentRawObject(response);
-  } catch (err) {
-    console.error(err);
-    throw new CustomError('Document not found', 'NONEXISTENT_DOCUMENT');
-  }
-};
-
 export const getDocument = async (contract, ipfsClient, id, options = {}) => {
   const finalOptions = {
     organizationDetails: false,
@@ -64,6 +54,8 @@ export const getDocument = async (contract, ipfsClient, id, options = {}) => {
   } catch (err) {
     throw new CustomError('Document does not exist', 'NONEXISTENT_DOCUMENT');
   }
+
+  rawDocumentData.body = rawDocumentData.body.join();
 
   if (rawDocumentData.magic !== '0x00000000000000000000000000000000') {
     if (typeof finalOptions.requestPassword !== 'function')
@@ -91,17 +83,24 @@ export const getDocument = async (contract, ipfsClient, id, options = {}) => {
     documentData.organization = await getOrganizationById(contract, documentData.organizationId);
   }
   if (finalOptions.attachmentInformation || finalOptions.attachedFiles) {
-    const attachmentsData = await listFilesInDirectory(ipfsClient, documentData.ipfsDirectoryHash);
-    documentData.attachments = attachmentsData;
-    if (finalOptions.attachedFiles) {
-      const promiseArray = attachmentsData.map(async attachment => {
-        const { content } = await getFile(ipfsClient, attachment.hash);
-        return {
-          ...attachment,
-          content,
-        };
-      });
-      documentData.attachments = await Promise.all(promiseArray);
+    if (documentData.ipfsDirectoryHash !== '') {
+      const attachmentsData = await listFilesInDirectory(
+        ipfsClient,
+        documentData.ipfsDirectoryHash
+      );
+      documentData.attachments = attachmentsData;
+      if (finalOptions.attachedFiles) {
+        const promiseArray = attachmentsData.map(async attachment => {
+          const { content } = await getFile(ipfsClient, attachment.hash);
+          return {
+            ...attachment,
+            content,
+          };
+        });
+        documentData.attachments = await Promise.all(promiseArray);
+      }
+    } else {
+      documentData.attachments = [];
     }
   }
   return documentData;
